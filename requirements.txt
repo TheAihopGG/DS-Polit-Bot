@@ -1,2 +1,0 @@
-disnake==2.9.2
-aiosqlite==0.20.0
