@@ -1,0 +1,177 @@
+{
+  "main": {
+    "id": "3000e4416e9dc114",
+    "type": "split",
+    "children": [
+      {
+        "id": "f125b34d23aa7a2e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "51379bc73bcd5c1c",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "Concept.canvas",
+                "viewState": {
+                  "x": 504.02875302146765,
+                  "y": 387.27948274727373,
+                  "zoom": -1.0533561818760955
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Concept"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "171bdbc0c7a2984a",
+    "type": "split",
+    "children": [
+      {
+        "id": "92df15aa17e4260d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "22d14f4ce8cba2d3",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-folder-closed",
+              "title": "File explorer"
+            }
+          },
+          {
+            "id": "fcad2ee9621b9a6c",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "b98c3d1eb2031cbb",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "c20430f71ec3edb2",
+    "type": "split",
+    "children": [
+      {
+        "id": "e3c9b162d083041f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a458a6651a41b582",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Concept.canvas",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Concept"
+            }
+          },
+          {
+            "id": "d7dd5b5b8d71ec0e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Concept.canvas",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Concept"
+            }
+          },
+          {
+            "id": "db5c1244b6353098",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "7e011b275ac4c3c0",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Concept.canvas"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Concept"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "51379bc73bcd5c1c",
+  "lastOpenFiles": [
+    "Database Struct.canvas",
+    "Commands.canvas",
+    "Concept.canvas",
+    "Commands.md",
+    "Untitled.md",
+    "Untitled"
+  ]
+}
