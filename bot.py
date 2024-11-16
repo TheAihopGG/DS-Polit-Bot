@@ -4,6 +4,7 @@ import disnake
 from disnake.ext import commands
 from data.settings import *
 from logging import *
+from services.token import get_token
 
 def main():
     # define logging
@@ -18,7 +19,6 @@ def main():
     )
     # define bot vars
     bot = commands.InteractionBot()
-    bot.status = disnake.Streaming('Testing')
     bot.load_extensions(EXTENSIONS_PATH)
     info('Extensions loaded!')
     # define events
@@ -26,7 +26,7 @@ def main():
     async def on_ready():
         info('Bot started!')
     # run bot
-    bot.run(open(TOKEN_PATH, 'r').read())
+    bot.run(get_token())
 
 if __name__ == '__main__':
     main()
