@@ -24,7 +24,7 @@ def main():
     # define events
     @bot.event
     async def on_ready():
-        info('Bot started!')
+        info('Bot started!') # show info
     # run bot
     bot.run(open(TOKEN_PATH, 'r').read())
 
