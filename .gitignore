@@ -1,6 +1,7 @@
 # By user
 *.db
 *.env
+.venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
