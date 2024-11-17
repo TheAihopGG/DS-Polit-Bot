@@ -1,13 +1,13 @@
 import disnake
 from disnake.ext import commands
-from services.interfaces import JobsCogAdminInterface, JobsCogMemberInterface
+from services.interfaces import CommonCogAdminInterface, CommonCogMemberInterface
 
-class CommonAdminCog(commands.Cog, JobsCogAdminInterface):
+class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
     def __init__(self, bot: commands.Bot):
         super().__init__()
         self.bot = bot
 
-class CommonMemberCog(commands.Cog, JobsCogMemberInterface):
+class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
     def __init__(self, bot: commands.Bot):
         super().__init__()
         self.bot = bot
