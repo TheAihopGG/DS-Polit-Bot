@@ -5,6 +5,7 @@ from disnake.ext import commands
 from data.settings import *
 from logging import *
 from services.token import get_token
+from services.database import create_tables
 
 def main():
     # define logging
@@ -25,6 +26,8 @@ def main():
     @bot.event
     async def on_ready():
         info('Bot started!')
+        await create_tables()
+        info('Tables created')
     # run bot
     bot.run(get_token())
 
