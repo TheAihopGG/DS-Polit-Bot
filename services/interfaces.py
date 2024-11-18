@@ -57,7 +57,9 @@ class CommonCogAdminInterface():
 
     def add_member(self, inter, member): pass
 
-    def edit_town_topic(self, inter, town, topic): pass
+    def edit_town_topic(self, inter, topic): pass
+
+    def edit_town_name(self, inter, name): pass
 
     def town_member_role(self, inter, role): pass
 
