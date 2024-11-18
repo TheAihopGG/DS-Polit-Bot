@@ -27,6 +27,10 @@ class JobsCogAdminInterface():
 
     def edit_job(self, inter, role, topic): pass
 
+    def off_jobs(self): pass
+    
+    def on_jobs(self): pass
+
 class JobsCogMemberInterface():
     def job_list(self, inter): pass
 
@@ -38,6 +42,10 @@ class RanksCogAdminInterface():
     def remove_rank(self, inter, role): pass
 
     def edit_rank(self, inter, role, points): pass
+
+    def off_jobs(self): pass
+
+    def on_jobs(self): pass
 
 class RanksCogMemberInterface():
     def ranks(self, inter): pass
