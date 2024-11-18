@@ -33,6 +33,7 @@ async def create_tables():
                 guild_id INTEGER,
                 username TEXT NOT NULL,
                 points INTEGER DEFAULT 0,
+                points_enabled BOOLEAN DEFAULT 1,
                 rank_id INTEGER,
                 town_id INTEGER,
                 jobs JSON DEFAULT [], 
