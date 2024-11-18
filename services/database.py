@@ -31,6 +31,7 @@ async def create_tables():
             CREATE TABLE IF NOT EXISTS users (
                 user_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 guild_id INTEGER,
+                member_role_id INTEGER,
                 username TEXT NOT NULL,
                 points INTEGER DEFAULT 0,
                 points_enabled BOOLEAN DEFAULT 1,
