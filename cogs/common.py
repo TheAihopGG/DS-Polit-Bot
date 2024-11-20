@@ -64,7 +64,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             result = await db.execute('''
                 DELETE FROM users 
                 WHERE user_id = ? AND town_id = ?;
-            ''', (member.id  , inter.guild_id))
+            ''', (member.id, inter.guild_id))
             await db.commit()
 
         if result.rowcount > 0:
@@ -75,15 +75,6 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
     @commands.slash_command(name='add_member')
     @commands.has_permissions(administrator=True)
     async def add_member(self, inter: disnake.ApplicationCommandInteraction, member: disnake.Member):
-        for guild_member in inter.guild.members:
-            if guild_member.name == member or guild_member.display_name == member:
-                member = guild_member
-                break
-
-        if member is None:
-            await inter.response.send_message(f'Пользователь @{member} не найден.')
-            return
-
         async with aiosqlite.connect(DB_PATH) as db:
             existing_user = await (await db.execute('''
                 SELECT * FROM users
@@ -134,8 +125,7 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
             async with db.execute('''
                 SELECT town_role_id FROM towns WHERE guild_id = ?;
             ''', (inter.guild_id,)) as cursor:
-                role = await cursor.fetchone()  
-                if role:
+                if role := await cursor.fetchone():
                     return role[0]
                 return None
 
@@ -144,30 +134,16 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
         role_id = await self.get_town_role_id(inter)  # Получаем ID роли города
         if role_id is None:
             await inter.response.send_message("Роль города не найдена.", ephemeral=True)
-            return
         
         async with aiosqlite.connect(DB_PATH) as db:
-            members = await (await db.execute('''
+            if members := await (await db.execute('''
                 SELECT user_id FROM users
                 WHERE town_id = ?
-            ''', (inter.guild_id,))).fetchall()
-        
-        if members:
-            member_names = []
-            for member in members:
-                user_id = member[0]
-                guild_member = await inter.guild.fetch_member(user_id)
-                if guild_member:
-                    if any(role.id == role_id for role in guild_member.roles):
-                        member_names.append(f'<@{user_id}>')
-                else:
-                    pass
-            if member_names:
+            ''', (inter.guild_id,))).fetchall():
+                member_names = [f'<@{user_id}>' if any(role.id == role_id for role in (await inter.guild.fetch_member(user_id)).roles) else None for user_id in [member[0] for member in members]]
                 await inter.response.send_message("Список пользователей:\n" + "\n".join(member_names))
             else:
-                pass
-        else:
-            await inter.response.send_message("В базе данных нет пользователей для этой гильдии.")
+                await inter.response.send_message("В базе данных нет пользователей для этой гильдии.")
 
 def setup(bot: commands.Bot):
     bot.add_cog(CommonAdminCog(bot))
