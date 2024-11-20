@@ -11,26 +11,21 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
 
     @commands.slash_command(name='setup')
     @commands.has_permissions(administrator=True)
-    async def setup(self, inter: disnake.ApplicationCommandInteraction):
-        guild_id = inter.guild.id
-        
+    async def setup(self, inter: disnake.ApplicationCommandInteraction):  
         async with aiosqlite.connect(DB_PATH) as db:
-
-            check = await db.execute('''
+            check = await (await db.execute('''
                 SELECT * FROM towns                  
                 WHERE guild_id = ?;
-            ''', (guild_id,))
-            check = await check.fetchone()
+            ''', (inter.guild_id,))).fetchone()
 
             if check is not None:
                 await inter.response.send_message("Сервер уже установлен", ephemeral=True)
                 return
 
-            guild_name = inter.guild.name
             await db.execute('''
                 INSERT INTO towns (guild_id, town_role_id, town_name, town_topic)
                 VALUES (?, ?, ?, ?);
-            ''', (guild_id, None , guild_name, "-"))
+            ''', (inter.guild_id, None , inter.guild.name, "-"))
 
             await db.commit()
             await inter.response.send_message("Сервер успешно установлен в базу данных!\n\n Также используйте /setup_member_role и /edit_town_topic")
@@ -46,19 +41,19 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             town_member_role = await (await db.execute('''
                 SELECT town_role_id FROM towns
                 WHERE guild_id = ?
-            ''', (inter.guild.id,))).fetchone()
+            ''', (inter.guild_id,))).fetchone()
             if town_member_role is not None:
                 new_role = inter.guild.get_role(role.id) 
                 await db.execute('''
                     UPDATE towns
                     SET town_role_id = ? WHERE guild_id = ?
-                ''', (role.id, inter.guild.id))
+                ''', (role.id, inter.guild_id))
                 await inter.response.send_message(f"Роль успешно заменена на {new_role.mention}", ephemeral=True)
             else: 
                 await db.execute('''
                     INSERT INTO towns (guild_id, town_role_id) 
                     VALUES (?, ?)
-                ''', (inter.guild.id, role.id)) 
+                ''', (inter.guild_id, role.id)) 
                 await inter.response.send_message(f"Роль <@{role.id}> установлена", ephemeral=True)
             await db.commit()
     
@@ -69,7 +64,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             result = await db.execute('''
                 DELETE FROM users 
                 WHERE user_id = ? AND town_id = ?;
-            ''', (member.id  , inter.guild.id))
+            ''', (member.id  , inter.guild_id))
             await db.commit()
 
         if result.rowcount > 0:
@@ -93,7 +88,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             existing_user = await (await db.execute('''
                 SELECT * FROM users
                 WHERE user_id = ? AND town_id = ?;
-            ''', (member.id, inter.guild.id))).fetchone()
+            ''', (member.id, inter.guild_id))).fetchone()
 
             if existing_user:
                 await inter.response.send_message(f'Пользователь @{member.name} уже существует в базе данных!')
@@ -102,7 +97,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             await db.execute('''
                 INSERT INTO users
                 VALUES (?, ?, ?, ?, ?);
-            ''', (member.id, 0, inter.guild.id, 0, 0)) 
+            ''', (member.id, 0, inter.guild_id, 0, 0)) 
             await db.commit()
 
         await inter.response.send_message(f'Пользователь {member.name} добавлен в базу данных!')
@@ -115,7 +110,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             async with db.execute('''
                 SELECT town_name FROM towns
                 WHERE guild_id = ?;
-            ''', (inter.guild.id,)) as cursor:
+            ''', (inter.guild_id,)) as cursor:
                 town = await cursor.fetchone()
 
             if town:
@@ -123,7 +118,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
                 await db.execute('''
                     UPDATE towns SET town_topic = ?
                     WHERE guild_id = ?;
-                ''', (description, inter.guild.id))
+                ''', (description, inter.guild_id))
                 await inter.response.send_message(f'Топик для города "{town_name}" обновлен на: "{description}".', ephemeral=True)
             else:
                 await inter.response.send_message(f'Город не найден в базе данных для этой гильдии. Используйте /setup', ephemeral=True)
@@ -138,7 +133,7 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute('''
                 SELECT town_role_id FROM towns WHERE guild_id = ?;
-            ''', (inter.guild.id,)) as cursor:
+            ''', (inter.guild_id,)) as cursor:
                 role = await cursor.fetchone()  
                 if role:
                     return role[0]
@@ -155,7 +150,7 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
             members = await (await db.execute('''
                 SELECT user_id FROM users
                 WHERE town_id = ?
-            ''', (inter.guild.id,))).fetchall()
+            ''', (inter.guild_id,))).fetchall()
         
         if members:
             member_names = []
