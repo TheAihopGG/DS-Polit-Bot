@@ -43,6 +43,10 @@ class RanksCogAdminInterface():
 
     def edit_rank(self, inter, role, points): pass
 
+    def give_rank(self, inter, role, member): pass
+
+    def take_rank(self, inter, role): pass
+
     def off_jobs(self): pass
 
     def on_jobs(self): pass
@@ -57,9 +61,7 @@ class CommonCogAdminInterface():
 
     def add_member(self, inter, member): pass
 
-    def edit_town_topic(self, inter, topic): pass
-
-    def edit_town_name(self, inter, name): pass
+    def edit_town_topic(self, inter, town, topic): pass
 
     def town_member_role(self, inter, role): pass
 
