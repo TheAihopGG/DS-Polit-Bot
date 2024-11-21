@@ -3,6 +3,7 @@ from data.settings import *
 from disnake.ext import commands
 from services.interfaces import RanksCogAdminInterface, RanksCogMemberInterface
 
+
 class RanksAdminCog(commands.Cog, RanksCogAdminInterface):
     def __init__(self, bot: commands.Bot):
         super().__init__()
