@@ -11,10 +11,12 @@ class PointsCogAdminInterface():
 
     def on_points(self, inter): pass
 
+
 class PointsCogMemberInterface():
     def points_info(self, inter): pass
 
     def points_top(self, inter): pass
+
 
 class JobsCogAdminInterface():
     def give_job(self, inter, member, role): pass
@@ -30,6 +32,7 @@ class JobsCogAdminInterface():
     def off_jobs(self): pass
     
     def on_jobs(self): pass
+
 
 class JobsCogMemberInterface():
     def job_list(self, inter): pass
@@ -47,10 +50,12 @@ class RanksCogAdminInterface():
 
     def on_jobs(self): pass
 
+
 class RanksCogMemberInterface():
     def ranks(self, inter): pass
 
     def rank(self, inter, member): pass
+
 
 class CommonCogAdminInterface():
     def remove_member(self, inter, member): pass
@@ -60,6 +65,7 @@ class CommonCogAdminInterface():
     def edit_town_topic(self, inter, town, topic): pass
 
     def town_member_role(self, inter, role): pass
+
 
 class CommonCogMemberInterface():
     def members_list(self, inter): pass

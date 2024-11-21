@@ -7,6 +7,7 @@ from logging import *
 from services.token import get_token
 from services.database import create_tables
 
+
 def main():
     # define logging
     basicConfig(

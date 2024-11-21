@@ -6,6 +6,7 @@ class TokenError(Exception): pass
 class TokenNotProvided(TokenError): pass
 class NoTokenFileProvided(TokenError): pass
 
+
 def get_token() -> str:
     """
     # usage:
