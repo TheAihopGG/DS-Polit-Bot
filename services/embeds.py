@@ -44,6 +44,6 @@ class Info(Footer):
         description: str = '',
         footer_text: str = '',
         **kwargs
-        ):
+    ):
         super().__init__(title=title, description=description, footer_text=footer_text, **kwargs)
         self.color = disnake.Color.blue()
