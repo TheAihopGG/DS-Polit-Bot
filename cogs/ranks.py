@@ -100,7 +100,7 @@ class RanksMemberCog(commands.Cog, RanksCogMemberInterface):
                 await inter.response.send_message('You are not a member of town')
 
     @commands.slash_command(name='ranks-list')
-    async def ranks(self, inter: disnake.ApplicationCommandInteraction):
+    async def ranks_list(self, inter: disnake.ApplicationCommandInteraction):
         async with aiosqlite.connect(DB_PATH) as db:
             if ranks := await (await db.execute('''
                 SELECT * FROM ranks

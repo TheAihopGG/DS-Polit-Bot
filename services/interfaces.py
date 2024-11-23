@@ -8,11 +8,8 @@ class PointsCogAdminInterface():
     def zero_all_points(self, inter): pass
 
 
-
 class PointsCogMemberInterface():
-    def points_info(self, inter): pass
-
-    def points_top(self, inter): pass
+    def points_top5(self, inter): pass
 
 
 class JobsCogAdminInterface():
@@ -25,8 +22,6 @@ class JobsCogAdminInterface():
     def remove_job(self, inter, role): pass
 
     def edit_job(self, inter, role, topic): pass
-
-
 
 
 class JobsCogMemberInterface():
@@ -43,9 +38,8 @@ class RanksCogAdminInterface():
     def edit_rank(self, inter, role, points): pass
 
 
-
 class RanksCogMemberInterface():
-    def ranks(self, inter): pass
+    def ranks_list(self, inter): pass
 
     def rank(self, inter, member): pass
 
