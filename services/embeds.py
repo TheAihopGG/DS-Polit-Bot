@@ -16,7 +16,7 @@ class Footer(disnake.Embed):
 class Success(Footer):
     def __init__(
         self,
-        title: str = 'Success',
+        title: str = 'Успешно',
         description: str = '',
         footer_text: str = '',
         **kwargs
@@ -28,7 +28,7 @@ class Success(Footer):
 class Error(Footer):
     def __init__(
         self,
-        title: str = 'Error',
+        title: str = 'Ошибка',
         description: str = '',
         footer_text: str = '',
         **kwargs
@@ -40,10 +40,21 @@ class Error(Footer):
 class Info(Footer):
     def __init__(
         self,
-        title: str = 'Information',
+        title: str = 'Информация',
         description: str = '',
         footer_text: str = '',
         **kwargs
     ):
         super().__init__(title=title, description=description, footer_text=footer_text, **kwargs)
         self.color = disnake.Color.blue()
+
+
+class AdminPerError(Error):
+    def __init__(
+        self,
+        title = 'Ошибка',
+        description = 'Вам необходимо иметь права администратора для выполнения этой команды',
+        footer_text = '',
+        **kwargs
+    ):
+        super().__init__(title, description, footer_text, **kwargs)
