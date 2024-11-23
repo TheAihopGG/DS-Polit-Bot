@@ -37,9 +37,20 @@ async def create_tables():
                 job_id INTEGER,
                 points INTEGER DEFAULT 0,
                 FOREIGN KEY (rank_id) REFERENCES ranks(rank_id)
+                ON DELETE SET NULL
+                ON UPDATE SET NULL
                 FOREIGN KEY (town_id) REFERENCES towns(town_id)
                 FOREIGN KEY (job_id) REFERENCES towns(job_id)
             );
         ''')
 
         await db.commit()
+
+
+async def get_town_role_id(db: aiosqlite.Connection, town_id: int) -> (int | None):
+    if result := await (await db.execute('''
+        SELECT town_role_id FROM towns
+        WHERE town_id = ?
+    ''', (town_id,))).fetchone():
+        return result[0]
+    return None
