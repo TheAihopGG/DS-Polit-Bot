@@ -8,7 +8,7 @@ async def create_tables():
                 job_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 town_id INTEGER,
                 job_name TEXT,
-                job_topic TEXT
+                job_description TEXT
             );
             CREATE TABLE IF NOT EXISTS ranks (
                 rank_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +19,7 @@ async def create_tables():
                 guild_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 town_role_id INTEGER,
                 town_name TEXT,
-                town_topic TEXT
+                town_description TEXT
             );
             CREATE TABLE IF NOT EXISTS users (
                 user_id INTEGER PRIMARY KEY AUTOINCREMENT,

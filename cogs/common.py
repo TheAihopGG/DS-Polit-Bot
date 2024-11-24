@@ -2,6 +2,7 @@ import disnake
 import aiosqlite
 from data.settings import *
 from disnake.ext import commands
+from services.embeds import *
 from services.interfaces import CommonCogAdminInterface, CommonCogMemberInterface
 
 
@@ -20,18 +21,17 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             ''', (inter.guild_id,))).fetchone()
 
             if check is not None:
-                await inter.response.send_message("Сервер уже установлен", ephemeral=True)
-                return
+                await inter.response.send_message(embed=Error(description='Вы уже использовали эту команду!', ephemeral=True))
+            else:
+                await db.execute('''
+                    INSERT INTO towns (guild_id, town_role_id, town_name, town_description)
+                    VALUES (?, ?, ?, ?);
+                ''', (inter.guild_id, None , inter.guild.name, None))
 
-            await db.execute('''
-                INSERT INTO towns (guild_id, town_role_id, town_name, town_topic)
-                VALUES (?, ?, ?, ?);
-            ''', (inter.guild_id, None , inter.guild.name, "-"))
-
-            await db.commit()
-            await inter.response.send_message("Сервер успешно установлен в базу данных!\n\nТакже используйте /set_member_role и /edit_town_topic")
+                await db.commit()
+                await inter.response.send_message(embed=Success('Сервер занесён в базу данных!'))
             
-    @commands.slash_command(name='set_member_role')
+    @commands.slash_command(name='set-member-role')
     @commands.has_permissions(administrator=True)
     async def set_member_role(
         self,
@@ -49,13 +49,13 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
                     UPDATE towns
                     SET town_role_id = ? WHERE guild_id = ?
                 ''', (role.id, inter.guild_id))
-                await inter.response.send_message(f"Роль успешно заменена на {new_role.mention}", ephemeral=True)
+                await inter.response.send_message(f'Роль успешно заменена на {new_role.mention}', ephemeral=True)
             else: 
                 await db.execute('''
                     INSERT INTO towns (guild_id, town_role_id) 
                     VALUES (?, ?)
                 ''', (inter.guild_id, role.id)) 
-                await inter.response.send_message(f"Роль <@{role.id}> установлена", ephemeral=True)
+                await inter.response.send_message(f'Роль <@{role.id}> установлена', ephemeral=True)
             await db.commit()
     
     @commands.slash_command(name='remove_member')
@@ -69,9 +69,9 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             await db.commit()
 
         if result.rowcount > 0:
-            await inter.response.send_message(f'Пользователь @{member.name} удален из базы данных!')
+            await inter.response.send_message(embed=Success(f'Пользователь <@&{member.id}> удален из базы данных!', ephemeral=True))
         else:
-            await inter.response.send_message(f'Пользователь @{member.name} не найден в базе данных.')
+            await inter.response.send_message(embed=Error(f'Пользователь <@&{member.id}> не найден в базе данных.', ephemeral=True))
 
     @commands.slash_command(name='add_member')
     @commands.has_permissions(administrator=True)
@@ -94,9 +94,9 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
 
         await inter.response.send_message(f'Пользователь {member.name} добавлен в базу данных!')
 
-    @commands.slash_command(name='edit_town_topic')
+    @commands.slash_command(name='edit_town_description')
     @commands.has_permissions(administrator=True)
-    async def edit_town_topic(self, inter: disnake.ApplicationCommandInteraction, description: str): 
+    async def edit_town_description(self, inter: disnake.ApplicationCommandInteraction, description: str): 
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute('''
                 SELECT town_name FROM towns
@@ -107,10 +107,10 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             if town:
                 town_name = town[0]  
                 await db.execute('''
-                    UPDATE towns SET town_topic = ?
+                    UPDATE towns SET town_description = ?
                     WHERE guild_id = ?;
                 ''', (description, inter.guild_id))
-                await inter.response.send_message(f'Топик для города "{town_name}" обновлен на: "{description}".', ephemeral=True)
+                await inter.response.send_message(f"Топик для города '{town_name}' обновлен на: '{description}'.", ephemeral=True)
             else:
                 await inter.response.send_message(f'Город не найден в базе данных для этой гильдии. Используйте /setup', ephemeral=True)
             await db.commit()
@@ -130,7 +130,7 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
                 if role := await cursor.fetchone():
                     role_id = role[0]
                 else:
-                    await inter.response.send_message("Роль города не найдена.", ephemeral=True)
+                    await inter.response.send_message('Роль города не найдена.', ephemeral=True)
                     return
 
             if members := await (await db.execute('''
@@ -138,21 +138,21 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
                 WHERE town_id = ? 
             ''', (inter.guild_id,))).fetchall():
                 member_names = [f'<@{user_id}>' if any(role.id == role_id for role in (await inter.guild.fetch_member(user_id)).roles) else None for user_id in [member[0] for member in members]]
-                await inter.response.send_message("Список пользователей:\n" + "\n".join(member_names))
+                await inter.response.send_message('Список пользователей:\n' + '\n'.join(member_names))
             else:
-                await inter.response.send_message("В базе данных нет пользователей для этой гильдии.")
+                await inter.response.send_message('В базе данных нет пользователей для этой гильдии.')
 
-    @commands.slash_command(name='town_topic')
-    async def town_topic(self, inter: disnake.ApplicationCommandInteraction):
+    @commands.slash_command(name='town_description')
+    async def town_description(self, inter: disnake.ApplicationCommandInteraction):
         async with aiosqlite.connect(DB_PATH) as db:
             async with db.execute('''
-                SELECT town_topic FROM towns
+                SELECT town_description FROM towns
                 WHERE guild_id = ?
             ''', (inter.guild_id,)) as cursor:
-                if town_topic := await cursor.fetchone():
-                    await inter.response.send_message(f"Описание вашего города:\n{town_topic[0]}")
+                if town_description := await cursor.fetchone():
+                    await inter.response.send_message(f'Описание вашего города:\n{town_description[0]}')
                 else:
-                    await inter.send("ГОЙДАААА", ephemeral=True)
+                    await inter.send('ГОЙДАААА', ephemeral=True)
 
 
 def setup(bot: commands.Bot):
