@@ -21,7 +21,7 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             ''', (inter.guild_id,))).fetchone()
 
             if check is not None:
-                await inter.response.send_message(embed=Error(description='Вы уже использовали эту команду!', ephemeral=True))
+                await inter.response.send_message(embed=Error(description='Вы уже использовали эту команду!' ), ephemeral=True)
             else:
                 await db.execute('''
                     INSERT INTO towns (guild_id, town_role_id, town_name, town_description)
@@ -69,9 +69,9 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
             await db.commit()
 
         if result.rowcount > 0:
-            await inter.response.send_message(embed=Success(f'Пользователь <@&{member.id}> удален из базы данных!', ephemeral=True))
+            await inter.response.send_message(embed=Success(f'Пользователь <@&{member.id}> удален из базы данных!'), ephemeral=True)
         else:
-            await inter.response.send_message(embed=Error(f'Пользователь <@&{member.id}> не найден в базе данных.', ephemeral=True))
+            await inter.response.send_message(embed=Error(f'Пользователь <@&{member.id}> не найден в базе данных.'), ephemeral=True)
 
     @commands.slash_command(name='add_member')
     @commands.has_permissions(administrator=True)
