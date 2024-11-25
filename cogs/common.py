@@ -39,23 +39,19 @@ class CommonAdminCog(commands.Cog, CommonCogAdminInterface):
         role: disnake.Role
     ):
         async with aiosqlite.connect(DB_PATH) as db:
-            town_member_role = await (await db.execute('''
-                SELECT town_role_id FROM towns
-                WHERE guild_id = ?
-            ''', (inter.guild_id,))).fetchone()
-            if town_member_role is not None:
-                new_role = inter.guild.get_role(role.id) 
-                await db.execute('''
-                    UPDATE towns
-                    SET town_role_id = ? WHERE guild_id = ?
-                ''', (role.id, inter.guild_id))
-                await inter.response.send_message(f'Роль успешно заменена на {new_role.mention}', ephemeral=True)
-            else: 
-                await db.execute('''
-                    INSERT INTO towns (guild_id, town_role_id) 
-                    VALUES (?, ?)
-                ''', (inter.guild_id, role.id)) 
-                await inter.response.send_message(f'Роль <@{role.id}> установлена', ephemeral=True)
+            # Пытаемся обновить роль города
+            async with db.execute(''' 
+                UPDATE towns 
+                SET town_role_id = ? 
+                WHERE guild_id = ? 
+            ''', (role.id, inter.guild_id)) as cursor:
+                if cursor.rowcount > 0:
+                    # Если запись была успешно обновлена
+                    await inter.response.send_message(embed=Success(description=f'Роль успешно обновлена на: {role.mention}', footer_text="квилтон гей"), ephemeral=True)
+                else:
+                    # Если запись о городе не найдена, отправляем сообщение об ошибке
+                    await inter.response.send_message(embed=Error(description='Город не найден. Пожалуйста, вызовите команду /setup для настройки.'), ephemeral=True)
+
             await db.commit()
     
     @commands.slash_command(name='remove_member')
