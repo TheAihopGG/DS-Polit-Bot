@@ -21,11 +21,11 @@ class JobsCogAdminInterface():
 
     def remove_job(self, inter, role): pass
 
-    def edit_job(self, inter, role, topic): pass
+    def edit_job(self, inter, role, description): pass
 
 
 class JobsCogMemberInterface():
-    def job_list(self, inter): pass
+    def jobs_list(self, inter): pass
 
     def refuse_job(self, inter): pass
 

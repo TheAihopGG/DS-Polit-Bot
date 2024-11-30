@@ -11,6 +11,66 @@ class RanksAdminCog(commands.Cog, RanksCogAdminInterface):
         super().__init__()
         self.bot = bot
 
+    @commands.slash_command(name='give-rank')
+    async def give_rank(
+        self,
+        inter: disnake.ApplicationCommandInteraction,
+        member: disnake.Member,
+        role: disnake.Role
+    ):
+        if inter.author.guild_permissions.administrator:
+            async with aiosqlite.connect(DB_PATH) as db:
+                ranks_ids = [r[0] for r in await (await db.execute('''
+                    SELECT * FROM ranks
+                    WHERE town_id=?
+                ''', (inter.guild_id,))).fetchall()]
+                if role.id in ranks_ids:
+                    async with db.execute('''
+                        UPDATE users
+                        SET rank_id=?
+                        WHERE user_id=?
+                    ''', (role.id, member.id)) as cursor:
+                        if cursor.rowcount > 0:
+                            await member.add_roles(role)
+                            await inter.response.send_message(embed=Success(description=f'Вы выдали ранг участнику <@{inter.author.id}> (<@&{role.id}>)'))
+                        else:
+                            await inter.response.send_message(embed=Error(description='Пользователь не является участником города'))
+                        await db.commit()
+                else:
+                    await inter.response.send_message(embed=Error(description=f'Роль <@&{role.id}> не является рангом'))
+        else:
+            await inter.response.send_message(embed=AdminPerError())
+    
+    @commands.slash_command(name='take-rank')
+    async def take_rank(
+        self,
+        inter: disnake.ApplicationCommandInteraction,
+        member: disnake.Member
+    ):
+        if inter.author.guild_permissions.administrator:
+            async with aiosqlite.connect(DB_PATH) as db:
+                result = await (await db.execute('''
+                    SELECT rank_id FROM users
+                    WHERE town_id=? AND user_id=?    
+                ''', (inter.guild_id, member.id))).fetchall()
+                if result is not None:
+                    [rank_id] = result
+                    async with db.execute('''
+                        UPDATE users
+                        SET rank_id=NULL
+                        WHERE user_id=?
+                    ''', (member.id,)) as cursor:
+                        if cursor.rowcount > 0:
+                            await member.remove_roles(inter.guild.get_role(rank_id))
+                            await inter.response.send_message(embed=Success(description=f'Вы забрали ранг у <@{inter.author.id}> (<@&{rank_id}>)'))
+                        else:
+                            await inter.response.send_message(embed=Error(description='Пользователь не является участником города'))
+                        await db.commit()
+                else:
+                    await inter.response.send_message(embed=Error(description='Пользователь не является участником города'))
+        else:
+            await inter.response.send_message(embed=AdminPerError())
+
     @commands.slash_command(name='add-rank')
     async def add_rank(
         self,
@@ -131,7 +191,7 @@ class RanksMemberCog(commands.Cog, RanksCogMemberInterface):
                 [rank_id] = result
                 await inter.response.send_message(embed=Info(description=f'**Ранг <@{member.id}>:** <@&{rank_id}>' if rank_id else f'У <@{member.id}> нету ранга'), ephemeral=True)
             else:
-                await inter.response.send_message(Error(description='Вы не являетесь участником города'), ephemeral=True)
+                await inter.response.send_message(embed=Error(description='Вы не являетесь участником города'), ephemeral=True)
 
     @commands.slash_command(name='ranks-list')
     async def ranks_list(self, inter: disnake.ApplicationCommandInteraction):

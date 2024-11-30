@@ -7,7 +7,6 @@ async def create_tables():
             CREATE TABLE IF NOT EXISTS jobs (
                 job_id INTEGER PRIMARY KEY AUTOINCREMENT,
                 town_id INTEGER,
-                job_name TEXT,
                 job_description TEXT
             );
             CREATE TABLE IF NOT EXISTS ranks (
