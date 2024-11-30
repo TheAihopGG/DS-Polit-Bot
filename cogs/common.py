@@ -133,11 +133,7 @@ class CommonMemberCog(commands.Cog, CommonCogMemberInterface):
                 SELECT * FROM users
                 WHERE town_id = ? 
             ''', (inter.guild_id,))).fetchall():
-                embed_description = 'Список пользователей:\n'
-                print(result)
-
                 embed_description = 'Список пользователей:\n' + '\n'.join([f'<@{user_id}>, <@&{rank_id}>, <@&{job_id}>, очков: {points}\n' for [user_id, rank_id, town_id, job_id, points] in result])
-                print(embed_description)
                 embed = Info(description=embed_description)
                 
                 await inter.response.send_message(embed=embed)
